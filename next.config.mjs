@@ -22,6 +22,7 @@ const babelIncludeRegexes = [
  * @type {import('next').NextConfig}
  * */
 const nextConfig = {
+  output: 'export',
   transpilePackages: [
     '@getpara/rainbowkit',
     '@getpara/rainbowkit-wallet',
@@ -41,97 +42,11 @@ const nextConfig = {
   swcMinify: true,
   images: {
     domains: ['metadata.ens.domains'],
+    unoptimized: true,
   },
-  async headers() {
-    // keep this in case we need to debug Safe in the future
-    if (process.env.NODE_ENV === 'development') {
-      return [
-        {
-          source: '/manifest.json',
-          headers: [
-            {
-              key: 'Access-Control-Allow-Origin',
-              value: '*',
-            },
-            {
-              key: 'Access-Control-Allow-Methods',
-              value: 'GET, OPTIONS',
-            },
-            {
-              key: 'Access-Control-Allow-Headers',
-              value: 'X-Requested-With, content-type, Authorization',
-            },
-          ],
-        },
-        {
-          source: '/(.*)',
-          headers: [
-            {
-              key: 'Content-Security-Policy',
-              value: "frame-ancestors 'self' https://app.safe.global;",
-            },
-          ],
-        },
-      ]
-    }
-    return []
-  },
-  async rewrites() {
-    return [
-      {
-        source: '/legacyFavourites',
-        destination: '/legacyfavourites',
-      },
-      {
-        source: '/my/profile',
-        destination: '/profile?connected=true',
-      },
-      {
-        source: '/names/:address',
-        destination: '/my/names?address=:address',
-      },
-      {
-        source: '/:address(0x[a-fA-F0-9]{40}$)',
-        destination: '/address?address=:address',
-      },
-      {
-        source: '/:name',
-        destination: '/profile?name=:name',
-      },
-      {
-        source: '/:name/register',
-        destination: '/register?name=:name',
-      },
-      {
-        source: '/:name/expired-profile',
-        destination: '/profile?name=:name&expired=true',
-      },
-      {
-        source: '/:name/import',
-        destination: '/import?name=:name',
-      },
-      {
-        source: '/:name/dotbox',
-        destination: '/dotbox?name=:name',
-      },
-      {
-        source: '/tld/:tld',
-        destination: '/profile?name=:tld',
-      },
-      {
-        source: '/tld/:tld/register',
-        destination: '/register?name=:tld',
-      },
-      {
-        source: '/tld/:tld/expired-profile',
-        destination: '/profile?name=:tld&expired=true',
-      },
-      {
-        source: '/tld/:tld/import',
-        destination: '/import?name=:tld',
-      },
-    ]
-  },
+  basePath: '',
+  assetPrefix: '.',
+  trailingSlash: true,
   generateBuildId: () => {
     const hash = execSync('git rev-parse HEAD').toString().trim()
     return hash
@@ -236,12 +151,6 @@ const nextConfig = {
     // next lint will ignore presets if not stated
     dirs: ['src', 'src/components', 'src/pages', 'src/layouts', 'playwright', 'e2e'],
   },
-  ...(process.env.NEXT_PUBLIC_IPFS
-    ? {
-        trailingSlash: true,
-        assetPrefix: './',
-      }
-    : {}),
 }
 
 /**

@@ -558,3 +558,43 @@ pnpm test:coverage
 ```bash
 pnpm e2e
 ```
+
+## Arweave Deployment
+
+This app can be deployed to Arweave as a permanent web application.
+
+### Prerequisites
+
+1. You need an Arweave wallet (JWK) to deploy to Arweave
+2. Store your wallet in a file named `wallet.json` in the project root
+   
+   ⚠️ **Security Warning**: Make sure to add `wallet.json` to your `.gitignore` to prevent accidentally committing your wallet
+
+### Deployment Steps
+
+1. Build and deploy in one step:
+   ```
+   pnpm build:arweave
+   ```
+
+2. Or separately:
+   ```
+   pnpm build
+   pnpm deploy:arweave
+   ```
+
+The deployment will output an Arweave URL where your app is accessible. The deployment information is also saved to `last-deployment.json`.
+
+### Configuration
+
+The app is configured to work well with Arweave using:
+- Static export mode (`output: 'export'`)
+- Relative asset paths
+- Unoptimized images for compatibility
+
+### Troubleshooting
+
+If you encounter issues with the UI after deployment:
+1. Check that the Next.js configuration has `output: 'export'` and `assetPrefix: '.'`
+2. Make sure images are set to `unoptimized: true` in the config
+3. Verify your wallet has enough AR to cover the upload cost
